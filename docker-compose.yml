@@ -1,0 +1,38 @@
+version: '2.1'
+
+services:
+    nginx:
+        container_name: d-nginx
+        build:
+            context: .
+            dockerfile: ./docker/nginx/Dockerfile
+        volumes:
+            - .:/project
+        networks:
+            okno:
+                aliases:
+                    - nginx
+        depends_on:
+            - app
+        ports:
+            - 80:80
+        env_file:
+            - ./docker/.env
+
+    app:
+        container_name: d-app
+        build:
+            context: .
+            dockerfile: ./docker/app/Dockerfile
+        volumes:
+            - .:/project
+        networks:
+            okno:
+                aliases:
+                    - app
+        env_file:
+            - ./docker/.env
+
+
+networks:
+    okno:

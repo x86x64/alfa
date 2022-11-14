@@ -1,0 +1,24 @@
+server {
+    listen 80 default;
+    server_name $APP_HOST;
+
+    root /project/laravel/public;
+    index index.php index.html;
+
+    access_log /var/log/nginx/app_access.log;
+    error_log /var/log/nginx/app_error.log;
+
+    charset utf-8;
+    client_max_body_size 128M;
+
+    location ~ \.php {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass app:9000;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+}
