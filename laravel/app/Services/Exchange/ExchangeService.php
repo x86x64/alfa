@@ -57,6 +57,17 @@ class ExchangeService
                     ]]
                 );
                 continue;
+            } elseif ($market['quote'] === $currencyTo && $market['base'] === $currencyFrom) {
+                $exchangeStrategies[] = new ExchangeStrategy(
+                    $currencyFrom,
+                    $currencyTo,
+                    $amount,
+                    [[
+                        'symbol' => $market['symbol'],
+                        'action' => MarketAction::ACTION_SELL,
+                    ]]
+                );
+                continue;
             }
             if ($market['base'] === $currencyFrom) {
                 $firstSell[$market['quote']] = [
