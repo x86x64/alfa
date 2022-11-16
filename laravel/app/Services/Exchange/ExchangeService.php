@@ -41,6 +41,7 @@ class ExchangeService
         $firstSell = [];
         $thenBuy = [];
         $thenSell = [];
+        $strategiesCount = 0;
 
         foreach ($this->exchange->markets as $market) {
             if (!$market['active']) {
@@ -56,6 +57,7 @@ class ExchangeService
                         'action' => MarketAction::ACTION_BUY,
                     ]]
                 );
+                $strategiesCount++;
                 continue;
             } elseif ($market['quote'] === $currencyTo && $market['base'] === $currencyFrom) {
                 $exchangeStrategies[] = new ExchangeStrategy(
@@ -67,6 +69,7 @@ class ExchangeService
                         'action' => MarketAction::ACTION_SELL,
                     ]]
                 );
+                $strategiesCount++;
                 continue;
             }
             if ($market['base'] === $currencyFrom) {
@@ -98,36 +101,52 @@ class ExchangeService
         $firstBuyThenSell = array_intersect_key($firstBuy, $thenSell);
 
         foreach ($firstSellThenBuy as $tempCurrencyName => $action) {
+            if ($strategiesCount >= 10) {
+                break;
+            }
             $exchangeStrategies[] = new ExchangeStrategy(
                 $currencyFrom,
                 $currencyTo,
                 $amount,
                 [$action, $thenBuy[ $tempCurrencyName ]]
             );
+            $strategiesCount++;
         }
         foreach ($firstBuyThenBuy as $tempCurrencyName => $action) {
+            if ($strategiesCount >= 10) {
+                break;
+            }
             $exchangeStrategies[] = new ExchangeStrategy(
                 $currencyFrom,
                 $currencyTo,
                 $amount,
                 [$action, $thenBuy[ $tempCurrencyName ]]
             );
+            $strategiesCount++;
         }
         foreach ($firstSellThenSell as $tempCurrencyName => $action) {
+            if ($strategiesCount >= 10) {
+                break;
+            }
             $exchangeStrategies[] = new ExchangeStrategy(
                 $currencyFrom,
                 $currencyTo,
                 $amount,
                 [$action, $thenSell[ $tempCurrencyName ]]
             );
+            $strategiesCount++;
         }
         foreach ($firstBuyThenSell as $tempCurrencyName => $action) {
+            if ($strategiesCount >= 10) {
+                break;
+            }
             $exchangeStrategies[] = new ExchangeStrategy(
                 $currencyFrom,
                 $currencyTo,
                 $amount,
                 [$action, $thenSell[ $tempCurrencyName ]]
             );
+            $strategiesCount++;
         }
 
         foreach ($exchangeStrategies as $exchangeStrategy) {
