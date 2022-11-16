@@ -39,6 +39,8 @@ class ExchangeController extends Controller
             return $a['result_amount'] < $b['result_amount'];
         });
 
+        $results = array_slice($results, 0, 11);
+
         return view('exchange.check', [
             'currencyFrom' => $currencyFrom,
             'currencyTo' => $currencyTo,
